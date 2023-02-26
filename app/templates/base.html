@@ -11,24 +11,29 @@
 <title>StashTracker</title>
 </head>
 <body>
-    <div class="collapse navbar-collape" id="navmenu">
-        <ul class="navbar-nav ms-auto">
-            <li class="nav-item">
-                <a href="{{ url_for('site.home') }}" class="nav-link">Home</a>
-            </li>
-            {% if current_user.is_authenticated %}
-            <li class="nav-item">
-                <a href="{{ url_for('auth.logout') }}" class="nav-link">Logout</a>
-            </li>
-            {% else %}
-            <li class="nav-item">
-                <a href="{{ url_for('auth.signin') }}" class="nav-link">Sign In</a>
-            </li>
-            <li class="nav-item">
-                <a href="{{ url_for('auth.signup') }}" class="nav-link">Sign Up</a>
-            </li>
-            {% endif %}
-        </ul>
+    <div class="navbar navbar-expand-lg" id="navmenu">
+        <div class="container-fluid">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a href="{{ url_for('site.home') }}" class="nav-link">Home</a>
+                </li>
+                {% if current_user.is_authenticated %}
+                <li class="nav-item">
+                    <a href="{{ url_for('site.profile') }}" class="nav-link">Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url_for('auth.logout') }}" class="nav-link">Logout</a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a href="{{ url_for('auth.signin') }}" class="nav-link">Sign In</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url_for('auth.signup') }}" class="nav-link">Sign Up</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
     </div>
 
     {% block content %}

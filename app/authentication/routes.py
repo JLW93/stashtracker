@@ -1,4 +1,4 @@
-from forms import UserLoginForm
+from forms import UserLoginForm, UserSignUpForm
 from models import User, db, check_password_hash
 from flask import Blueprint, render_template, request, redirect, url_for, flash # try to make flash work
 
@@ -10,7 +10,7 @@ auth = Blueprint('auth', __name__, template_folder = 'auth_templates')
 
 @auth.route('/signup', methods = ['GET', 'POST'])
 def signup():
-    form = UserLoginForm()
+    form = UserSignUpForm()
 
     try:
         if request.method == 'POST' and form.validate_on_submit():
@@ -47,6 +47,7 @@ def signin():
         if request.method == 'POST' and form.validate_on_submit():
             email = form.email.data
             password = form.password.data
+            print(email, password)
 
             logged_user = User.query.filter(User.email == email).first()
             if logged_user and check_password_hash(logged_user.password, password):

@@ -44,6 +44,9 @@ class User(db.Model, UserMixin):
         self.pw_hash = generate_password_hash(password)
         return self.pw_hash
 
+    def get_id(self):
+        return (self.user_id)
+
     def __repr__(self):
         return f'User { self.email } has been added to the Database.'
 
@@ -81,8 +84,9 @@ class StashItem(db.Model):
     serial_number = db.Column(db.String(100), nullable = True, default = '')
     quantity = db.Column(db.Numeric(4,0), nullable = False, default = 1)
     stash_id = db.Column(db.String, db.ForeignKey('stash.stash_id'), nullable = False)
+    # user_token = db.Column(db.String, db.ForeignKey('user.token'), nullable = False)
 
-    def __init__(self, item_name, stash_id, item_type = '', item_value = '', purchase_date = '', serial_number = '', item_id = '', quantity = 1):
+    def __init__(self, item_name, stash_id, quantity = 1, item_type = '', item_value = '', purchase_date = '', serial_number = '', item_id = ''):
         self.item_id = self.set_id()
         self.item_name = item_name
         self.stash_id = stash_id
@@ -91,6 +95,7 @@ class StashItem(db.Model):
         self.purchase_date = purchase_date
         self.serial_number = serial_number
         self.quantity = quantity
+
 
     def __repr__(self):
         return f'The following item has been added to a Stash: {self.item_name}.'
