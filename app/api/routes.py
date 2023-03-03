@@ -121,3 +121,11 @@ def create_stash_item(current_user_token, stash_id):
 
     response = stash_item_schema.dump(item)
     return jsonify(response)
+
+# @api.route('/token', methods = ['GET'])
+# @token_required
+# def get_token(current_user_token):
+#     token = current_user_token.token
+
+#     return token
+

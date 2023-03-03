@@ -1,6 +1,6 @@
 from forms import UserLoginForm, UserSignUpForm
 from models import User, db, check_password_hash
-from flask import Blueprint, render_template, request, redirect, url_for, flash # try to make flash work
+from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify # try to make flash work
 
 from flask_login import login_user, logout_user, LoginManager, current_user, login_required
 
@@ -25,9 +25,9 @@ def signup():
                 db.session.add(user)
                 db.session.commit()
             
-                flash(f'You have successfully created a user account for {email}. Redirecting in 6 seconds...', 'User-created')
+                flash(f'You have successfully created a user account for {email}. Redirecting in 3 seconds...', 'User-created')
 
-                time.sleep(6)
+                time.sleep(3)
 
                 return redirect(url_for('site.home'))
 
@@ -42,25 +42,31 @@ def signup():
 @auth.route('/signin', methods = ['GET', 'POST'])
 def signin():
     form = UserLoginForm()
+    print(request.data)
+    print(request.get_json())
 
+    data = request.get_json()
+    email = data['email']
+    password = data['password']
     try:
-        if request.method == 'POST' and form.validate_on_submit():
-            email = form.email.data
-            password = form.password.data
+        if request.method == 'POST':
+            # email = form.email.data
+            # password = form.password.data
             print(email, password)
 
             logged_user = User.query.filter(User.email == email).first()
             if logged_user and check_password_hash(logged_user.password, password):
                 login_user(logged_user)
-                flash('Login successful. Redirecting in 6 seconds...', 'auth-success')
-                time.sleep(6)
-                return redirect(url_for('site.home'))
+                token = logged_user.token
+
+                return jsonify({"token": token})
+                
             else:
-                flash('Failed to log in. Please try again.', 'auth-failed')
-                return redirect(url_for('auth.signin'))
+                
+                return jsonify({"error": "Invalid Email or Password."}), 401
     except:
         raise Exception('Invalid entry: Please try again.')
-    return render_template('sign_in.html', form = form)
+    return 'test'
 
 @auth.route('/logout')
 def logout():

@@ -11,7 +11,7 @@ from .api.routes import api
 from helpers import JSONEncoder
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources = {'/*':{'origins': 'http://localhost:3000'}})
 
 app.register_blueprint(site)
 app.register_blueprint(auth)
