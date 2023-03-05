@@ -13,11 +13,16 @@ def signup():
     form = UserSignUpForm()
 
     try:
-        if request.method == 'POST' and form.validate_on_submit():
-            email = form.email.data
-            confirm_email = form.confirm_email.data
-            password = form.password.data
-            confirm_password = form.confirm_password.data
+        if request.method == 'POST':
+            # email = form.email.data
+            # confirm_email = form.confirm_email.data
+            # password = form.password.data
+            # confirm_password = form.confirm_password.data
+            data = request.get_json()
+            email = data['email']
+            confirm_email = data['confirmEmail']
+            password = data['password']
+            confirm_password = data['confirmPassword']
 
             if email == confirm_email and password == confirm_password:
                 user = User(email, password = password)
@@ -29,10 +34,12 @@ def signup():
 
                 time.sleep(3)
 
-                return redirect(url_for('site.home'))
+                # return redirect(url_for('site.home'))
+                return jsonify({'message': 'Account created successfully!'}), 201
 
             else:
-                flash('Username or Password does not match.')
+                # flash('Username or Password does not match.')
+                return jsonify({'error': 'Email or Password do not match.'}), 400
     
     except:
         raise Exception('Invalid entry: Please try again.')

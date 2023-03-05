@@ -27,6 +27,8 @@ def get_single_stash(current_user_token, stash_id):
 @api.route('/stashes', methods = ['POST'])
 @token_required
 def create_stash(current_user_token):
+    # print('test')
+    # print(request.data)
     stash_name = request.json['stash_name']
     user_token = current_user_token.token
 

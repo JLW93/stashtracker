@@ -19,7 +19,7 @@ class User(db.Model, UserMixin):
     user_id = db.Column(db.String, primary_key = True)
     first_name = db.Column(db.String(100), nullable = True, default = '')
     last_name = db.Column(db.String(100), nullable = True, default = '')
-    email = db.Column(db.String(100), nullable = False)
+    email = db.Column(db.String(100), nullable = False, unique = True)
     password = db.Column(db.String, nullable = True, default = '')
     g_auth_verify = db.Column(db.Boolean, default = False)
     token = db.Column(db.String, default = '', unique = True)
