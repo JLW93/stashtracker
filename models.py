@@ -50,6 +50,12 @@ class User(db.Model, UserMixin):
     def __repr__(self):
         return f'User { self.email } has been added to the Database.'
 
+class UserSchema(ma.Schema):
+    class Meta:
+        fields = ['first_name', 'last_name', 'email']
+
+user_schema = UserSchema()
+
 class Stash(db.Model):
     stash_id = db.Column(db.String, primary_key = True)
     stash_name = db.Column(db.String(100), nullable = False)

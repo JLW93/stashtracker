@@ -1,6 +1,7 @@
 from forms import UserLoginForm, UserSignUpForm
-from models import User, db, check_password_hash
+from models import User, db, check_password_hash, generate_password_hash, user_schema
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify # try to make flash work
+from helpers import token_required
 
 from flask_login import login_user, logout_user, LoginManager, current_user, login_required
 
@@ -79,3 +80,69 @@ def signin():
 def logout():
     logout_user()
     return redirect(url_for('site.home'))
+
+# change first name and last name
+@auth.route('/update-data', methods = ['PUT'])
+@token_required
+def update_user_data(current_user_token):
+    data = request.get_json()
+    token = current_user_token.token
+
+    user = User.query.filter(User.token == token).first()
+
+    if not user:
+        return 'User not found or incorrect token', 404
+    
+    if not token:
+        return 'Token not found', 404
+    
+    try:
+        user.first_name = request.json.get('first_name', user.first_name)
+        user.last_name = request.json.get('last_name', user.last_name)
+        db.session.commit()
+    except:
+        raise Exception('Missing required data.')
+
+# change password
+@auth.route('/update-password', methods = ['PUT'])
+@token_required
+def update_password(current_user_token):
+    data = request.get_json()
+    token = current_user_token.token
+    old_password = data['old_password']
+    new_password = data['new_password']
+
+    user = User.query.filter(User.token == token).first()
+
+    if not user:
+        return 'User not found', 404
+    
+    if not token:
+        return 'Invalid token or token not found', 404
+    
+    if not old_password or not new_password:
+        return 'Incorrect or missing password.', 404
+    
+    if user and check_password_hash(user.password, old_password):
+        new_pw_hash = generate_password_hash(new_password)
+        user.password = new_pw_hash
+
+        db.session.commit()
+
+        return jsonify({'message': 'Password Updated!'}), 201
+    return 'test'
+
+
+# get data to display on front end
+@auth.route('/get-user-data', methods = ['GET'])
+@token_required
+def get_user_data(current_user_token):
+    token = current_user_token.token
+
+    user = User.query.filter(User.token == token).first()
+
+    if not user:
+        return 'User not found', 404
+
+    response = user_schema.dump(user)
+    return jsonify(response)
